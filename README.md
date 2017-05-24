@@ -42,7 +42,7 @@ if err := errorutil.HTTPError(resp); err != nil {
 Find the most appropriate status code for an error :
 
 ```go
-w.WriteHeader(errorutil.HTTPStatusCode(err)) // returns http.StatusNotFound
+w.WriteHeader(errorutil.HTTPStatusCode(err))
 ```
 
 Generate specific error types :
@@ -51,4 +51,13 @@ Generate specific error types :
 err := errors.New("some error")
 err = errorutil.NotFoundError(err)
 w.WriteHeader(errorutil.HTTPStatusCode(err)) // returns http.StatusNotFound
+```
+
+## Notes
+
+errorutil is compatible with https://github.com/pkg/errors :
+
+```go
+err = errors.Wrap(errorutil.RetraybleError(err), "some message")
+errorutil.IsRetryable(err) // returns true
 ```

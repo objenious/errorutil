@@ -43,10 +43,10 @@ func HTTPStatusCode(err error) int {
 	return http.StatusInternalServerError
 }
 
-// HTTPError builds an error based on a http.Response. If status code is < 300, nil is returned.
+// HTTPError builds an error based on a http.Response. If status code is < 300 or 304, nil is returned.
 // Otherwise, errors implementing the various interfaces (Retryabler, HTTPStatusCodeEr) are returned
 func HTTPError(resp *http.Response) error {
-	if resp.StatusCode < 300 {
+	if resp.StatusCode < 300 || resp.StatusCode == http.StatusNotModified {
 		return nil
 	}
 	return httpError(resp.StatusCode)

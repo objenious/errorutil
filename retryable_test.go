@@ -3,6 +3,7 @@ package errorutil
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"testing"
 
 	pkgerrors "github.com/pkg/errors"
@@ -34,6 +35,24 @@ func TestIsRetryable(t *testing.T) {
 		{RetryableError(errors.New("foo")), true},
 		{RetryableError(pkgerrors.New("foo")), true},
 		{pkgerrors.Wrap(RetryableError(errors.New("foo")), "bar"), true},
+
+		{httpError(http.StatusBadGateway), true},
+		{pkgerrors.Wrap(httpError(http.StatusBadGateway), "bar"), true},
+		{httpError(http.StatusInternalServerError), true},
+		{pkgerrors.Wrap(httpError(http.StatusInternalServerError), "bar"), true},
+		{httpError(http.StatusGatewayTimeout), true},
+		{pkgerrors.Wrap(httpError(http.StatusGatewayTimeout), "bar"), true},
+		{httpError(429), true},
+		{pkgerrors.Wrap(httpError(429), "bar"), true},
+		{httpError(http.StatusNotFound), false},
+		{pkgerrors.Wrap(httpError(http.StatusNotFound), "bar"), false},
+		{NotFoundError(errors.New("foo")), false},
+		{httpError(http.StatusBadRequest), false},
+		{pkgerrors.Wrap(httpError(http.StatusBadRequest), "bar"), false},
+		{InvalidError(errors.New("foo")), false},
+		{httpError(http.StatusForbidden), false},
+		{pkgerrors.Wrap(httpError(http.StatusForbidden), "bar"), false},
+		{ForbiddenError(errors.New("foo")), false},
 
 		{retryable(false), false},
 		{retryable(true), true},

@@ -14,9 +14,32 @@ func HTTPStatusCode(err error) int {
 	if err == nil {
 		return http.StatusOK
 	}
-	if status, ok := err.(HTTPStatusCodeEr); ok {
-		return status.HTTPStatusCode()
+	type causer interface {
+		Cause() error
 	}
+
+	for err != nil {
+		if status, ok := err.(HTTPStatusCodeEr); ok {
+			return status.HTTPStatusCode()
+		}
+		// Check errors from stdlib. Test string to avoid importing packages
+		switch err.Error() {
+		// package os
+		case "permission denied":
+			return http.StatusForbidden
+		case "file does not exist":
+			return http.StatusNotFound
+		// package database/sql
+		case "sql: no rows in result set":
+			return http.StatusNotFound
+		}
+		cause, ok := err.(causer)
+		if !ok {
+			break
+		}
+		err = cause.Cause()
+	}
+
 	return http.StatusInternalServerError
 }
 

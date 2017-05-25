@@ -24,8 +24,9 @@ func main() {
 
 ## HTTP Aware errors
 
-Build an error based on a http.Response.
-It will be retryable of status code is http.StatusBadGateway, http.StatusGatewayTimeout, http.StatusServiceUnavailable, http.StatusInternalServerError or 429 (Too many requests).
+Build an error based on a http.Response. Status code above 299, except 304, will be considered an error.
+
+It will be retryable if status code is http.StatusBadGateway, http.StatusGatewayTimeout, http.StatusServiceUnavailable, http.StatusInternalServerError or 429 (Too many requests).
 
 ```go
 resp, err := http.Get("http://www.example.com")

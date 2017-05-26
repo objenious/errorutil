@@ -35,7 +35,8 @@ Build an error based on a http.Response. It will be retryable of status code is 
     // return error
   }
   // handle response
-  Find the most appropriate status code for an error :
+
+Find the most appropriate status code for an error :
 
   w.WriteHeader(errorutil.HTTPStatusCode(err))
 

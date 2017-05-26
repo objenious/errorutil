@@ -7,9 +7,16 @@ type HTTPStatusCodeEr interface {
 	HTTPStatusCode() int
 }
 
-// HTTPStatusCode returns the status code that an error should return.
+// HTTPStatusCode returns the status code that a HTTP handler should return.
+//
 // If the error is nil, StatusOK is returned.
-// If the error does not implement HTTPStatusCodeEr, StatusInternalServerError is returned.
+//
+// If the error implements HTTPStatusCodeEr, it returns the corresponding status code.
+//
+// It tries to check some stdlib errors (testing the error string, to avoid importing unwanted packages),
+// and returns appropriate status codes.
+//
+// Otherwise, StatusInternalServerError is returned.
 func HTTPStatusCode(err error) int {
 	if err == nil {
 		return http.StatusOK

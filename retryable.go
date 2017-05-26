@@ -2,13 +2,14 @@ package errorutil
 
 import "net/http"
 
-// Retryabler defines an temporary error in a process, which cound be restarted
+// Retryabler defines an error that may be temporary. A function returning a retryable error should be executed again.
 type Retryabler interface {
 	Retryable() bool
 }
 
 // IsRetryable checks if an error is retryable (i.e. implements Retryabler and Retryable returns true).
-// If the error is nil or does not implement Retryabler, false is returned
+//
+// If the error is nil or does not implement Retryabler, false is returned.
 func IsRetryable(err error) bool {
 	type causer interface {
 		Cause() error
@@ -28,7 +29,8 @@ func IsRetryable(err error) bool {
 }
 
 // IsNotRetryable checks if an error is explicitely marked as not retryable (i.e. implements Retryabler and Retryable returns false).
-// If the error is nil or does not implement Retryabler, false is returned
+//
+// If the error is nil or does not implement Retryabler, false is returned.
 func IsNotRetryable(err error) bool {
 	type causer interface {
 		Cause() error

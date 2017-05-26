@@ -75,6 +75,6 @@ backoffutil.Retry(func() error {
 errorutil is compatible with https://github.com/pkg/errors :
 
 ```go
-err = errors.Wrap(errorutil.RetraybleError(err), "some message")
+err = errors.Wrap(errorutil.RetryableError(err), "some message")
 errorutil.IsRetryable(err) // returns true
 ```

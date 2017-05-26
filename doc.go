@@ -53,7 +53,7 @@ Notes
 
 errorutil is compatible with https://github.com/pkg/errors :
 
-  err = errors.Wrap(errorutil.RetraybleError(err), "some message")
+  err = errors.Wrap(errorutil.RetryableError(err), "some message")
   errorutil.IsRetryable(err) // returns true
 */
 package errorutil

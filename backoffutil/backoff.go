@@ -12,6 +12,12 @@ import (
 // Retry does exponential backoff.
 // Backoff will trigger if an error is returned, implements Retryabler AND the error is retryable.
 func Retry(fn func() error) error {
+	return RetryWithCustomBackOff(fn, backoff.NewExponentialBackOff())
+}
+
+// RetryWithCustomExponentialBackOff does exponential backoff.
+// Backoff will trigger if an error is returned, implements Retryabler AND the error is retryable.
+func RetryWithCustomBackOff(fn func() error, bo backoff.BackOff) error {
 	var finalerr error
 	err := backoff.Retry(func() error {
 		finalerr = fn()
@@ -19,7 +25,7 @@ func Retry(fn func() error) error {
 			return finalerr
 		}
 		return nil
-	}, backoff.NewExponentialBackOff())
+	}, bo)
 
 	if err != nil {
 		return err

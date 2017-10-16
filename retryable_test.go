@@ -106,3 +106,33 @@ func ExampleIsNotRetryable() {
 	err = RetryableError(err)
 	IsNotRetryable(err) // will return false
 }
+
+func TestNewRetryableError(t *testing.T) {
+	err := NewRetryableError("retryable error")
+	if IsNotRetryable(err) {
+		t.Errorf("NewRetryableError must return a retryable error")
+	}
+	if err.Error() != "retryable error" {
+		t.Errorf("NewRetryableError: expected :%s, got %s", "test", err.Error())
+	}
+}
+
+func ExampleNewRetryableError() {
+	err := NewRetryableError("test")
+	IsRetryable(err) // will return true
+}
+
+func TestNewRetryableErrorf(t *testing.T) {
+	err := NewRetryableErrorf("retryable error %s", "formatted")
+	if IsNotRetryable(err) {
+		t.Errorf("NewRetryableErrorf must return a retryable error")
+	}
+	if err.Error() != "retryable error formatted" {
+		t.Errorf("NewRetryableErrorf: expected :%s, got %s", "retryable error formatted", err.Error())
+	}
+}
+
+func ExampleNewRetryableErrorf() {
+	err := NewRetryableErrorf("Unable to read data for device %d", 70)
+	IsRetryable(err) // will return true
+}

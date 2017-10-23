@@ -1,6 +1,10 @@
 package errorutil
 
-import "net/http"
+import (
+	"errors"
+	"fmt"
+	"net/http"
+)
 
 // Retryabler defines an error that may be temporary. A function returning a retryable error should be executed again.
 type Retryabler interface {
@@ -55,6 +59,17 @@ func RetryableError(err error) error {
 		return nil
 	}
 	return &retryableError{err: err}
+}
+
+// NewRetryableError returns a retryable error that formats as the given text.
+func NewRetryableError(text string) error {
+	return RetryableError(errors.New(text))
+}
+
+// NewRetryableErrorf formats according to a format specifier and returns the string
+// as a value that satisfies a retryable error.
+func NewRetryableErrorf(format string, args ...interface{}) error {
+	return RetryableError(fmt.Errorf(format, args...))
 }
 
 type retryableError struct {

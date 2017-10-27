@@ -32,7 +32,7 @@ func IsRetryable(err error) bool {
 	return false
 }
 
-// IsNotRetryable checks if an error is explicitely marked as not retryable (i.e. implements Retryabler and Retryable returns false).
+// IsNotRetryable checks if an error is explicitly marked as not retryable (i.e. implements Retryabler and Retryable returns false).
 //
 // If the error is nil or does not implement Retryabler, false is returned.
 func IsNotRetryable(err error) bool {
@@ -59,6 +59,14 @@ func RetryableError(err error) error {
 		return nil
 	}
 	return &retryableError{err: err}
+}
+
+// NotRetryableError marks an error as NOT retryable. It returns nil if the error is nil.
+func NotRetryableError(err error) error {
+	if err == nil {
+		return nil
+	}
+	return &notRetryableError{err: err}
 }
 
 // NewRetryableError returns a retryable error that formats as the given text.
@@ -89,5 +97,25 @@ func (err *retryableError) HTTPStatusCode() int {
 }
 
 func (err *retryableError) Cause() error {
+	return err.err
+}
+
+type notRetryableError struct {
+	err error
+}
+
+func (err *notRetryableError) Error() string {
+	return err.err.Error()
+}
+
+func (err *notRetryableError) Retryable() bool {
+	return false
+}
+
+func (err *notRetryableError) HTTPStatusCode() int {
+	return http.StatusInternalServerError
+}
+
+func (err *notRetryableError) Cause() error {
 	return err.err
 }

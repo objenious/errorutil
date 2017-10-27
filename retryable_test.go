@@ -26,6 +26,7 @@ func TestIsRetryable(t *testing.T) {
 	}{
 		{nil, false},
 		{RetryableError(nil), false},
+		{NotRetryableError(nil), false},
 		{pkgerrors.Wrap(RetryableError(nil), "bar"), false},
 
 		{errors.New("foo"), false},
@@ -35,6 +36,11 @@ func TestIsRetryable(t *testing.T) {
 		{RetryableError(errors.New("foo")), true},
 		{RetryableError(pkgerrors.New("foo")), true},
 		{pkgerrors.Wrap(RetryableError(errors.New("foo")), "bar"), true},
+
+		{RetryableError(NotRetryableError(errors.New("foo"))), true},
+		{NotRetryableError(errors.New("foo")), false},
+		{NotRetryableError(pkgerrors.New("foo")), false},
+		{pkgerrors.Wrap(NotRetryableError(errors.New("foo")), "bar"), false},
 
 		{httpError(http.StatusBadGateway), true},
 		{pkgerrors.Wrap(httpError(http.StatusBadGateway), "bar"), true},
@@ -54,8 +60,29 @@ func TestIsRetryable(t *testing.T) {
 		{pkgerrors.Wrap(httpError(http.StatusForbidden), "bar"), false},
 		{ForbiddenError(errors.New("foo")), false},
 
+
+		{NotRetryableError(httpError(http.StatusBadGateway)), false},
+		{NotRetryableError(pkgerrors.Wrap(httpError(http.StatusBadGateway), "bar")), false},
+		{NotRetryableError(httpError(http.StatusInternalServerError)), false},
+		{NotRetryableError(pkgerrors.Wrap(httpError(http.StatusInternalServerError), "bar")), false},
+		{NotRetryableError(httpError(http.StatusGatewayTimeout)), false},
+		{NotRetryableError(pkgerrors.Wrap(httpError(http.StatusGatewayTimeout), "bar")), false},
+		{NotRetryableError(httpError(429)), false},
+		{NotRetryableError(pkgerrors.Wrap(httpError(429), "bar")), false},
+		{NotRetryableError(httpError(http.StatusNotFound)), false},
+		{NotRetryableError(pkgerrors.Wrap(httpError(http.StatusNotFound), "bar")), false},
+		{NotRetryableError(NotFoundError(errors.New("foo"))), false},
+		{NotRetryableError(httpError(http.StatusBadRequest)), false},
+		{NotRetryableError(pkgerrors.Wrap(httpError(http.StatusBadRequest), "bar")), false},
+		{NotRetryableError(InvalidError(errors.New("foo"))), false},
+		{NotRetryableError(httpError(http.StatusForbidden)), false},
+		{NotRetryableError(pkgerrors.Wrap(httpError(http.StatusForbidden), "bar")), false},
+		{NotRetryableError(ForbiddenError(errors.New("foo"))), false},
+
 		{retryable(false), false},
 		{retryable(true), true},
+		{NotRetryableError(retryable(false)), false},
+		{NotRetryableError(retryable(true)), false},
 	}
 	for _, tt := range tests {
 		got := IsRetryable(tt.err)
@@ -70,6 +97,8 @@ func ExampleIsRetryable() {
 	IsRetryable(err) // will return false
 	err = RetryableError(err)
 	IsRetryable(err) // will return true
+	//err = NotRetryableError(err)
+	IsRetryable(err) // will return false
 }
 
 func TestIsNotRetryable(t *testing.T) {
@@ -79,15 +108,24 @@ func TestIsNotRetryable(t *testing.T) {
 	}{
 		{nil, false},
 		{RetryableError(nil), false},
+		{NotRetryableError(nil), false},
 		{pkgerrors.Wrap(RetryableError(nil), "bar"), false},
+		{NotRetryableError(pkgerrors.Wrap(RetryableError(nil), "bar")), false},
 
 		{errors.New("foo"), false},
 		{pkgerrors.New("foo"), false},
 		{pkgerrors.Wrap(errors.New("foo"), "bar"), false},
 
 		{RetryableError(errors.New("foo")), false},
+		{NotRetryableError(errors.New("foo")), true},
+		{NotRetryableError(RetryableError(errors.New("foo"))), true},
 		{RetryableError(pkgerrors.New("foo")), false},
+		{NotRetryableError(RetryableError(pkgerrors.New("foo"))), true},
+		{NotRetryableError(pkgerrors.New("foo")), true},
 		{pkgerrors.Wrap(RetryableError(errors.New("foo")), "bar"), false},
+		{pkgerrors.Wrap(NotRetryableError(errors.New("foo")), "bar"), true},
+		{NotRetryableError(pkgerrors.Wrap(RetryableError(errors.New("foo")), "bar")), true},
+		{RetryableError(NotRetryableError(pkgerrors.Wrap(RetryableError(errors.New("foo")), "bar"))), false},
 
 		{retryable(false), true},
 		{retryable(true), false},

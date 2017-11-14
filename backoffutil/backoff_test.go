@@ -10,7 +10,7 @@ func ExampleRetry() {
 	Retry(func() error {
 		resp, err := http.Get("http://www.example.com")
 		if err != nil {
-			return err
+			return errorutil.RetryableError(err)
 		}
 		defer resp.Body.Close()
 		if err := errorutil.HTTPError(resp); err != nil {

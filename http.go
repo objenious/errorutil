@@ -171,3 +171,32 @@ func (err *invalidError) IsRetryable() bool {
 func (err *invalidError) Cause() error {
 	return err.err
 }
+
+// ConflictError marks an error as "conflict". The calling http handler
+// should return a Conflict status code. It returns nil if the error is nil.
+func ConflictError(err error) error {
+	if err == nil {
+		return nil
+	}
+	return &conflictError{err: err}
+}
+
+type conflictError struct {
+	err error
+}
+
+func (err *conflictError) Error() string {
+	return err.err.Error()
+}
+
+func (err *conflictError) HTTPStatusCode() int {
+	return http.StatusConflict
+}
+
+func (err *conflictError) IsRetryable() bool {
+	return false
+}
+
+func (err *conflictError) Cause() error {
+	return err.err
+}

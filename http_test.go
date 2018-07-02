@@ -37,6 +37,8 @@ func TestHTTPStatusCode(t *testing.T) {
 		{pkgerrors.Wrap(ForbiddenError(errors.New("foo")), "bar"), http.StatusForbidden},
 		{InvalidError(errors.New("foo")), http.StatusBadRequest},
 		{pkgerrors.Wrap(InvalidError(errors.New("foo")), "bar"), http.StatusBadRequest},
+		{ConflictError(errors.New("foo")), http.StatusConflict},
+		{pkgerrors.Wrap(ConflictError(errors.New("foo")), "bar"), http.StatusConflict},
 	}
 	for _, tt := range tests {
 		got := HTTPStatusCode(tt.err)
@@ -77,4 +79,11 @@ func ExampleInvalidError() {
 	err := errors.New("some error")
 	err = InvalidError(err)
 	w.WriteHeader(HTTPStatusCode(err)) // returns http.StatusBadRequest
+}
+
+func ExampleConflictError() {
+	var w http.ResponseWriter
+	err := errors.New("some error")
+	err = ConflictError(err)
+	w.WriteHeader(HTTPStatusCode(err)) // returns http.StatusConflict
 }

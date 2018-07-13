@@ -7,6 +7,8 @@ import (
 	"os"
 	"testing"
 
+	"cloud.google.com/go/storage"
+
 	pkgerrors "github.com/pkg/errors"
 )
 
@@ -25,6 +27,10 @@ func TestHTTPStatusCode(t *testing.T) {
 		{pkgerrors.Wrap(os.ErrPermission, "bar"), http.StatusForbidden},
 		{sql.ErrNoRows, http.StatusNotFound},
 		{pkgerrors.Wrap(sql.ErrNoRows, "bar"), http.StatusNotFound},
+		{storage.ErrBucketNotExist, http.StatusNotFound},
+		{pkgerrors.Wrap(storage.ErrBucketNotExist, "bar"), http.StatusNotFound},
+		{storage.ErrObjectNotExist, http.StatusNotFound},
+		{pkgerrors.Wrap(storage.ErrObjectNotExist, "bar"), http.StatusNotFound},
 
 		{httpError(http.StatusNotFound), http.StatusNotFound},
 		{pkgerrors.Wrap(httpError(http.StatusNotFound), "bar"), http.StatusNotFound},

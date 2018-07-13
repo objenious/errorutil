@@ -36,6 +36,10 @@ func HTTPStatusCode(err error) int {
 			return http.StatusForbidden
 		case "file does not exist":
 			return http.StatusNotFound
+		case "storage: bucket doesn't exist":
+			return http.StatusNotFound
+		case "storage: object doesn't exist":
+			return http.StatusNotFound
 		// package database/sql
 		case "sql: no rows in result set":
 			return http.StatusNotFound
@@ -46,7 +50,6 @@ func HTTPStatusCode(err error) int {
 		}
 		err = cause.Cause()
 	}
-
 	return http.StatusInternalServerError
 }
 

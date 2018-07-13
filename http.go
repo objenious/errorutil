@@ -74,6 +74,9 @@ func (err httpError) HTTPStatusCode() int {
 	return int(err)
 }
 
+func (err httpError) StatusCode() int {
+	return int(err)
+}
 func (err httpError) Retryable() bool {
 	switch int(err) {
 	case http.StatusBadGateway, http.StatusGatewayTimeout, http.StatusServiceUnavailable, http.StatusInternalServerError:

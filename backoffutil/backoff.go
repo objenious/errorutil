@@ -5,7 +5,7 @@
 package backoffutil
 
 import (
-	"github.com/cenk/backoff"
+	"github.com/cenkalti/backoff"
 	"github.com/objenious/errorutil"
 )
 

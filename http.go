@@ -7,11 +7,16 @@ type HTTPStatusCodeEr interface {
 	HTTPStatusCode() int
 }
 
+// StatusCodeEr defines errors that should return a specific HTTP status code
+type StatusCodeEr interface {
+	StatusCode() int
+}
+
 // HTTPStatusCode returns the status code that a HTTP handler should return.
 //
 // If the error is nil, StatusOK is returned.
 //
-// If the error implements HTTPStatusCodeEr, it returns the corresponding status code.
+// If the error implements HTTPStatusCodeEr or StatusCodeEr, it returns the corresponding status code.
 //
 // It tries to check some stdlib errors (testing the error string, to avoid importing unwanted packages),
 // and returns appropriate status codes.
@@ -28,6 +33,9 @@ func HTTPStatusCode(err error) int {
 	for err != nil {
 		if status, ok := err.(HTTPStatusCodeEr); ok {
 			return status.HTTPStatusCode()
+		}
+		if status, ok := err.(StatusCodeEr); ok {
+			return status.StatusCode()
 		}
 		// Check errors from stdlib. Test string to avoid importing packages
 		switch err.Error() {

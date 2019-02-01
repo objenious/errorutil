@@ -2,6 +2,27 @@
 
 `go get github.com/objenious/errorutil`
 
+## Delayed errors
+
+```go
+func foo() error {
+	err := bar()
+	timer := time.Hour
+	if err != nil {
+		// it should be delayed 1h later
+		return errorutil.WithDelay(err, timer) 
+	}
+	return bar() // will not be delayed
+}
+
+func main() {
+	err := foo()
+	time.AfterFunc(errorutil.Delay(err), func() {
+		...
+	})
+}
+```
+
 ## Retryable errors
 
 ```go

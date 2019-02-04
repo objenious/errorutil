@@ -35,7 +35,7 @@ func WithDelay(err error, duration time.Duration) error {
 	if err == nil {
 		return nil
 	}
-	return &delayedError{err, duration}
+	return &delayedError{error: err, duration: duration}
 }
 
 // NewDelayedError returns a delayed error that formats as the given text and duration.
@@ -48,9 +48,6 @@ type delayedError struct {
 	duration time.Duration
 }
 
-func (err *delayedError) Error() string {
-	return err.error.Error()
-}
 
 func (err *delayedError) Delay() time.Duration {
 	return err.duration

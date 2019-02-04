@@ -19,7 +19,10 @@ func TestDelay(t *testing.T) {
 		{WithDelay(errors.New("foo"), 0), 0},
 		{WithDelay(errors.New("foo"), 10), 10},
 	}
-
+	err := WithDelay(errors.New("foobar"), 10)
+	if err.Error() != "foobar" {
+		t.Errorf("WithDelay(%q): got: %v, want %v", err, err.Error(), "foobar")
+	}
 	for _, tt := range tests {
 		got := Delay(tt.err)
 		if got != tt.want {

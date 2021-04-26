@@ -93,7 +93,7 @@ backoffutil.Retry(func() error {
 
 ## Notes
 
-errorutil is compatible with https://github.com/pkg/errors :
+errorutil is compatible with https://github.com/objenious/errors :
 
 ```go
 err = errors.Wrap(errorutil.RetryableError(err), "some message")

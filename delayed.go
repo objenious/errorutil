@@ -1,8 +1,9 @@
 package errorutil
 
 import (
-	"github.com/pkg/errors"
 	"time"
+
+	"github.com/objenious/errors"
 )
 
 // Delayer defines an error that
@@ -47,7 +48,6 @@ type delayedError struct {
 	error
 	duration time.Duration
 }
-
 
 func (err *delayedError) Delay() time.Duration {
 	return err.duration

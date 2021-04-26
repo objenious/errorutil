@@ -1,9 +1,10 @@
 package errorutil
 
 import (
-	"github.com/pkg/errors"
 	"testing"
 	"time"
+
+	"github.com/objenious/errors"
 )
 
 func TestDelay(t *testing.T) {

@@ -52,7 +52,7 @@ see backoffutil sub package
 
 Notes
 
-errorutil is compatible with https://github.com/pkg/errors :
+errorutil is compatible with https://github.com/objenious/errors :
 
   err = errors.Wrap(errorutil.RetryableError(err), "some message")
   errorutil.IsRetryable(err) // returns true

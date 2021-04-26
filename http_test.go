@@ -9,7 +9,7 @@ import (
 
 	"cloud.google.com/go/storage"
 
-	pkgerrors "github.com/pkg/errors"
+	oerrors "github.com/objenious/errors"
 )
 
 func TestHTTPStatusCode(t *testing.T) {
@@ -22,29 +22,29 @@ func TestHTTPStatusCode(t *testing.T) {
 		{errors.New("foo"), http.StatusInternalServerError},
 
 		{os.ErrNotExist, http.StatusNotFound},
-		{pkgerrors.Wrap(os.ErrNotExist, "bar"), http.StatusNotFound},
+		{oerrors.Wrap(os.ErrNotExist, "bar"), http.StatusNotFound},
 		{os.ErrPermission, http.StatusForbidden},
-		{pkgerrors.Wrap(os.ErrPermission, "bar"), http.StatusForbidden},
+		{oerrors.Wrap(os.ErrPermission, "bar"), http.StatusForbidden},
 		{sql.ErrNoRows, http.StatusNotFound},
-		{pkgerrors.Wrap(sql.ErrNoRows, "bar"), http.StatusNotFound},
+		{oerrors.Wrap(sql.ErrNoRows, "bar"), http.StatusNotFound},
 		{storage.ErrBucketNotExist, http.StatusNotFound},
-		{pkgerrors.Wrap(storage.ErrBucketNotExist, "bar"), http.StatusNotFound},
+		{oerrors.Wrap(storage.ErrBucketNotExist, "bar"), http.StatusNotFound},
 		{storage.ErrObjectNotExist, http.StatusNotFound},
-		{pkgerrors.Wrap(storage.ErrObjectNotExist, "bar"), http.StatusNotFound},
+		{oerrors.Wrap(storage.ErrObjectNotExist, "bar"), http.StatusNotFound},
 
 		{httpError(http.StatusNotFound), http.StatusNotFound},
-		{pkgerrors.Wrap(httpError(http.StatusNotFound), "bar"), http.StatusNotFound},
+		{oerrors.Wrap(httpError(http.StatusNotFound), "bar"), http.StatusNotFound},
 		{httpError(http.StatusForbidden), http.StatusForbidden},
-		{pkgerrors.Wrap(httpError(http.StatusForbidden), "bar"), http.StatusForbidden},
+		{oerrors.Wrap(httpError(http.StatusForbidden), "bar"), http.StatusForbidden},
 
 		{NotFoundError(errors.New("foo")), http.StatusNotFound},
-		{pkgerrors.Wrap(NotFoundError(errors.New("foo")), "bar"), http.StatusNotFound},
+		{oerrors.Wrap(NotFoundError(errors.New("foo")), "bar"), http.StatusNotFound},
 		{ForbiddenError(errors.New("foo")), http.StatusForbidden},
-		{pkgerrors.Wrap(ForbiddenError(errors.New("foo")), "bar"), http.StatusForbidden},
+		{oerrors.Wrap(ForbiddenError(errors.New("foo")), "bar"), http.StatusForbidden},
 		{InvalidError(errors.New("foo")), http.StatusBadRequest},
-		{pkgerrors.Wrap(InvalidError(errors.New("foo")), "bar"), http.StatusBadRequest},
+		{oerrors.Wrap(InvalidError(errors.New("foo")), "bar"), http.StatusBadRequest},
 		{ConflictError(errors.New("foo")), http.StatusConflict},
-		{pkgerrors.Wrap(ConflictError(errors.New("foo")), "bar"), http.StatusConflict},
+		{oerrors.Wrap(ConflictError(errors.New("foo")), "bar"), http.StatusConflict},
 	}
 	for _, tt := range tests {
 		got := HTTPStatusCode(tt.err)

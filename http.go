@@ -51,6 +51,8 @@ func HTTPStatusCode(err error) int {
 		// package database/sql
 		case "sql: no rows in result set":
 			return http.StatusNotFound
+		case "i/o timeout":
+			return http.StatusRequestTimeout
 		}
 		cause, ok := err.(causer)
 		if !ok {

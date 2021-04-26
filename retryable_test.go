@@ -2,7 +2,6 @@ package errorutil
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"testing"
 
@@ -12,7 +11,10 @@ import (
 type retryable bool
 
 func (err retryable) Error() string {
-	return fmt.Sprintf("%v", err)
+	if err {
+		return "true"
+	}
+	return "false"
 }
 
 func (err retryable) Retryable() bool {
@@ -59,7 +61,6 @@ func TestIsRetryable(t *testing.T) {
 		{httpError(http.StatusForbidden), false},
 		{pkgerrors.Wrap(httpError(http.StatusForbidden), "bar"), false},
 		{ForbiddenError(errors.New("foo")), false},
-
 
 		{NotRetryableError(httpError(http.StatusBadGateway)), false},
 		{NotRetryableError(pkgerrors.Wrap(httpError(http.StatusBadGateway), "bar")), false},

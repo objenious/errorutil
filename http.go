@@ -1,6 +1,9 @@
 package errorutil
 
-import "net/http"
+import (
+	"errors"
+	"net/http"
+)
 
 // HTTPStatusCodeEr defines errors that should return a specific HTTP status code
 type HTTPStatusCodeEr interface {
@@ -55,10 +58,11 @@ func HTTPStatusCode(err error) int {
 			return http.StatusRequestTimeout
 		}
 		cause, ok := err.(causer)
-		if !ok {
-			break
+		if ok {
+			err = cause.Cause()
+		} else {
+			err = errors.Unwrap(err)
 		}
-		err = cause.Cause()
 	}
 	return http.StatusInternalServerError
 }
